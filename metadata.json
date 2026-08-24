@@ -1,6 +1,6 @@
 {
-  "name": "Income & Expense Tracker",
-  "description": "A comprehensive mobile-first daily income and expense management application with real-time analytics, budgeting, category insights, transaction history, and data backup.",
+  "name": "CampusPulse AI - Smart Android Student Companion",
+  "description": "An intelligent campus management and student companion Android application featuring Gemini AI assistant, course & exam dashboard, event registration, study resources hub, assignment tracker, push notifications, and faculty admin portal.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

@@ -1,140 +1,97 @@
-import React from 'react';
-import { useFinance } from '../context/FinanceContext';
+import React, { useState } from 'react';
+import { useCampus } from '../context/CampusContext';
 import {
-  Moon,
-  Sun,
+  GraduationCap,
   Bell,
+  QrCode,
   Smartphone,
-  Monitor,
-  Download,
-  Plus,
+  Maximize2,
+  Sparkles,
+  Shield,
+  User,
+  Search,
+  Code2,
 } from 'lucide-react';
 
-interface NavbarProps {
-  onOpenNotifications: () => void;
-  onOpenBackup: () => void;
-  onOpenAddTx: () => void;
-}
-
-export const Navbar: React.FC<NavbarProps> = ({
-  onOpenNotifications,
-  onOpenBackup,
-  onOpenAddTx,
-}) => {
+export const Navbar: React.FC = () => {
   const {
-    user,
+    currentStudent,
+    userRole,
+    switchProfile,
     unreadNotificationCount,
-    isDarkMode,
-    toggleDarkMode,
+    setActiveTab,
     isMobileFrame,
     toggleMobileFrame,
-    setActiveTab,
-    activeTab,
-  } = useFinance();
+    setIsIdCardOpen,
+  } = useCampus();
+
+  const [isRoleMenuOpen, setIsRoleMenuOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-30 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800/80 transition-colors">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
-        {/* Brand / Logo */}
-        <div
-          id="brand-logo-btn"
-          onClick={() => setActiveTab('dashboard')}
-          className="flex items-center gap-3 cursor-pointer select-none group"
-        >
-          <div className="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-bold shadow-md shadow-indigo-600/30 group-hover:scale-105 transition-transform">
-            <span className="text-base font-extrabold">F</span>
+    <header className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 sticky top-0 z-40 px-4 py-2.5 transition-colors">
+      <div className="flex items-center justify-between gap-3">
+        {/* Campus Brand & Student Status */}
+        <div className="flex items-center gap-2.5 min-w-0">
+          <div
+            onClick={() => setActiveTab('dashboard')}
+            className="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-600 flex items-center justify-center text-white shadow-md shadow-indigo-500/20 cursor-pointer shrink-0"
+          >
+            <GraduationCap className="w-5 h-5" />
           </div>
-          <div>
+          <div className="min-w-0">
             <div className="flex items-center gap-1.5">
-              <h1 className="text-base sm:text-lg font-bold tracking-tight text-slate-900 dark:text-white">
-                FinTrack
-              </h1>
-              <span className="text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-md bg-indigo-50 dark:bg-indigo-950/80 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">
-                PRO
+              <span className="font-bold text-sm tracking-tight text-slate-900 dark:text-white truncate">
+                CampusPulse
+              </span>
+              <span className="text-[10px] font-semibold bg-indigo-100 dark:bg-indigo-950/80 text-indigo-700 dark:text-indigo-300 px-1.5 py-0.5 rounded-md">
+                {userRole === 'faculty' ? 'Faculty Admin' : `Sem ${currentStudent.semester}`}
               </span>
             </div>
-            <p className="text-[11px] text-slate-500 dark:text-slate-400 hidden sm:block">
-              Daily Financial Management
+            <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate">
+              {currentStudent.name} • {userRole === 'faculty' ? 'Dean Office' : 'CS & AI'}
             </p>
           </div>
         </div>
 
-        {/* Desktop Navigation Links */}
-        <nav className="hidden md:flex lg:hidden items-center gap-1 bg-slate-100 dark:bg-slate-800/80 p-1 rounded-xl border border-slate-200/80 dark:border-slate-700/80">
-          {[
-            { id: 'dashboard', label: 'Dashboard' },
-            { id: 'transactions', label: 'Transactions' },
-            { id: 'analytics', label: 'Analytics' },
-            { id: 'budgets', label: 'Budgets' },
-          ].map((tab) => (
-            <button
-              key={tab.id}
-              id={`nav-link-${tab.id}`}
-              onClick={() => setActiveTab(tab.id as any)}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
-                activeTab === tab.id
-                  ? 'bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 shadow-xs'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </nav>
-
         {/* Action Controls */}
-        <div className="flex items-center gap-1.5 sm:gap-2">
-          {/* Quick Add Button */}
+        <div className="flex items-center gap-1.5">
+          {/* Quick AI Trigger */}
           <button
-            id="quick-add-tx-nav-btn"
-            onClick={onOpenAddTx}
-            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold shadow-md shadow-indigo-600/20 transition-all hover:shadow-indigo-600/30 active:scale-98"
+            onClick={() => setActiveTab('ai-assistant')}
+            id="nav-ai-btn"
+            title="Ask CampusPulse AI"
+            className="hidden sm:flex items-center gap-1 text-xs font-semibold px-2.5 py-1.5 rounded-xl bg-gradient-to-r from-indigo-500/10 to-violet-500/10 dark:from-indigo-950/50 dark:to-violet-950/50 border border-indigo-200 dark:border-indigo-800/80 text-indigo-600 dark:text-indigo-300 hover:bg-indigo-500/20 transition-all"
           >
-            <Plus className="w-4 h-4" />
-            <span className="hidden sm:inline">Add Transaction</span>
-            <span className="sm:hidden">Add</span>
+            <Sparkles className="w-3.5 h-3.5 text-indigo-500 animate-pulse" />
+            <span>AI Tutor</span>
           </button>
 
-          {/* Backup & Export */}
+          {/* Android Kotlin Source Code Viewer */}
           <button
-            id="backup-nav-btn"
-            onClick={onOpenBackup}
-            title="Backup & Export Data"
-            className="p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-transparent hover:border-slate-200 dark:hover:border-slate-700 transition-colors"
+            onClick={() => setActiveTab('android-source')}
+            id="nav-android-source-btn"
+            title="View Android Studio Source Code & Architecture"
+            className="p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors relative"
           >
-            <Download className="w-4 h-4" />
+            <Code2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
           </button>
 
-          {/* Mobile Frame Toggle */}
+          {/* Student ID Card Pass */}
           <button
-            id="mobile-frame-toggle-btn"
-            onClick={toggleMobileFrame}
-            title={isMobileFrame ? 'Switch to Fullscreen Responsive View' : 'Switch to Mobile Android Device Frame'}
-            className={`p-2 rounded-xl transition-colors ${
-              isMobileFrame
-                ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-950/60 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800'
-                : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
-            }`}
+            onClick={() => setIsIdCardOpen(true)}
+            id="nav-id-card-btn"
+            title="Digital Student ID & Library Pass"
+            className="p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors"
           >
-            {isMobileFrame ? <Monitor className="w-4 h-4" /> : <Smartphone className="w-4 h-4" />}
+            <QrCode className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
           </button>
 
-          {/* Dark Mode Toggle */}
+          {/* Notification Bell */}
           <button
-            id="dark-mode-toggle-btn"
-            onClick={toggleDarkMode}
-            title={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-            className="p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-          >
-            {isDarkMode ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4" />}
-          </button>
-
-          {/* Notification Center */}
-          <button
-            id="notification-center-btn"
-            onClick={onOpenNotifications}
-            title="Notifications & Alerts"
-            className="relative p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+            onClick={() => setActiveTab('notifications')}
+            id="nav-notifications-btn"
+            title="Campus Notifications & Alerts"
+            className="p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors relative"
           >
             <Bell className="w-4 h-4" />
             {unreadNotificationCount > 0 && (
@@ -142,17 +99,78 @@ export const Navbar: React.FC<NavbarProps> = ({
             )}
           </button>
 
-          {/* User Profile Avatar */}
-          <div
-            id="user-profile-nav-btn"
-            onClick={() => setActiveTab('profile')}
-            className="flex items-center gap-2 pl-1 cursor-pointer select-none"
+          {/* Device Frame Toggle (Android Chassis vs Fullscreen) */}
+          <button
+            onClick={toggleMobileFrame}
+            id="nav-frame-toggle-btn"
+            title={isMobileFrame ? 'Expand to Fullscreen View' : 'Switch to Android Device Frame'}
+            className="p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors"
           >
-            <img
-              src={user.avatarUrl}
-              alt={user.name}
-              className="w-8 h-8 rounded-full object-cover ring-2 ring-indigo-500/60 shadow-xs"
-            />
+            {isMobileFrame ? <Maximize2 className="w-4 h-4" /> : <Smartphone className="w-4 h-4" />}
+          </button>
+
+          {/* Role Switcher Menu */}
+          <div className="relative">
+            <button
+              onClick={() => setIsRoleMenuOpen(!isRoleMenuOpen)}
+              id="nav-role-switcher-btn"
+              className="flex items-center gap-1.5 p-1.5 pl-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-200 transition-colors"
+            >
+              <img
+                src={currentStudent.avatarUrl}
+                alt={currentStudent.name}
+                className="w-5 h-5 rounded-lg object-cover ring-1 ring-indigo-500/40"
+              />
+              <span className="hidden md:inline capitalize">{userRole}</span>
+            </button>
+
+            {isRoleMenuOpen && (
+              <div
+                className="absolute right-0 mt-2 w-56 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl p-2 z-50 animate-in fade-in slide-in-from-top-2"
+                onClick={() => setIsRoleMenuOpen(false)}
+              >
+                <div className="px-3 py-2 border-b border-slate-100 dark:border-slate-800">
+                  <p className="text-xs font-bold text-slate-900 dark:text-white truncate">
+                    {currentStudent.name}
+                  </p>
+                  <p className="text-[10px] text-slate-500 dark:text-slate-400">
+                    ID: {currentStudent.studentId}
+                  </p>
+                </div>
+
+                <div className="py-1">
+                  <button
+                    onClick={() => switchProfile('student')}
+                    className={`w-full px-3 py-2 text-left text-xs rounded-xl flex items-center gap-2.5 transition-colors ${
+                      userRole === 'student'
+                        ? 'bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-300 font-semibold'
+                        : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+                    }`}
+                  >
+                    <User className="w-3.5 h-3.5" />
+                    <div>
+                      <div className="font-semibold">Student Mode</div>
+                      <div className="text-[10px] text-slate-400">Alex Rivera (B.Tech Sem 5)</div>
+                    </div>
+                  </button>
+
+                  <button
+                    onClick={() => switchProfile('faculty')}
+                    className={`w-full px-3 py-2 text-left text-xs rounded-xl flex items-center gap-2.5 transition-colors mt-1 ${
+                      userRole === 'faculty'
+                        ? 'bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-300 font-semibold'
+                        : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+                    }`}
+                  >
+                    <Shield className="w-3.5 h-3.5 text-amber-500" />
+                    <div>
+                      <div className="font-semibold">Faculty & Admin Mode</div>
+                      <div className="text-[10px] text-slate-400">Dr. Marcus Vance (HOD)</div>
+                    </div>
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

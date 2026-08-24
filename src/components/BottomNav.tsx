@@ -1,82 +1,102 @@
 import React from 'react';
-import { useFinance } from '../context/FinanceContext';
+import { useCampus } from '../context/CampusContext';
 import {
   LayoutDashboard,
-  ArrowLeftRight,
-  PieChart,
-  Target,
-  User,
-  Plus,
+  Sparkles,
+  Calendar,
+  BookOpen,
+  CheckSquare,
+  Shield,
+  Code2,
 } from 'lucide-react';
 import { ActiveTab } from '../types';
 
-interface BottomNavProps {
-  onOpenAddTx: () => void;
-}
+export const BottomNav: React.FC = () => {
+  const { activeTab, setActiveTab, userRole, unreadNotificationCount, assignments } = useCampus();
 
-export const BottomNav: React.FC<BottomNavProps> = ({ onOpenAddTx }) => {
-  const { activeTab, setActiveTab } = useFinance();
+  const pendingAssignmentsCount = assignments.filter(
+    (a) => a.status === 'Pending' || a.status === 'In Progress'
+  ).length;
 
-  const navItems: { id: ActiveTab; label: string; icon: React.ReactNode }[] = [
-    { id: 'dashboard', label: 'Home', icon: <LayoutDashboard className="w-5 h-5" /> },
-    { id: 'transactions', label: 'History', icon: <ArrowLeftRight className="w-5 h-5" /> },
-    { id: 'analytics', label: 'Reports', icon: <PieChart className="w-5 h-5" /> },
-    { id: 'budgets', label: 'Budgets', icon: <Target className="w-5 h-5" /> },
-    { id: 'profile', label: 'Profile', icon: <User className="w-5 h-5" /> },
+  const navItems: {
+    id: ActiveTab;
+    label: string;
+    icon: React.ReactNode;
+    badge?: number;
+    highlight?: boolean;
+  }[] = [
+    {
+      id: 'dashboard',
+      label: 'Home',
+      icon: <LayoutDashboard className="w-5 h-5" />,
+    },
+    {
+      id: 'ai-assistant',
+      label: 'AI Tutor',
+      icon: <Sparkles className="w-5 h-5" />,
+      highlight: true,
+    },
+    {
+      id: 'events',
+      label: 'Events',
+      icon: <Calendar className="w-5 h-5" />,
+    },
+    {
+      id: 'resources',
+      label: 'Notes',
+      icon: <BookOpen className="w-5 h-5" />,
+    },
+    {
+      id: 'assignments',
+      label: 'Tasks',
+      icon: <CheckSquare className="w-5 h-5" />,
+      badge: pendingAssignmentsCount > 0 ? pendingAssignmentsCount : undefined,
+    },
+    {
+      id: userRole === 'faculty' ? 'admin' : 'android-source',
+      label: userRole === 'faculty' ? 'Admin' : 'Android App',
+      icon: userRole === 'faculty' ? <Shield className="w-5 h-5" /> : <Code2 className="w-5 h-5" />,
+    },
   ];
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg border-t border-slate-200 dark:border-slate-800 px-3 py-2 lg:hidden transition-colors">
-      <div className="flex items-center justify-around relative">
-        {navItems.slice(0, 2).map((item) => (
+    <nav className="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 px-2 py-1.5 flex items-center justify-around z-30 shrink-0 select-none shadow-lg">
+      {navItems.map((item) => {
+        const isActive = activeTab === item.id;
+        return (
           <button
             key={item.id}
             id={`bottom-nav-${item.id}`}
             onClick={() => setActiveTab(item.id)}
-            className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition-all ${
-              activeTab === item.id
+            className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-2xl transition-all relative ${
+              isActive
                 ? 'text-indigo-600 dark:text-indigo-400 font-bold'
-                : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
+                : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
             }`}
           >
-            <div className={`p-1 rounded-lg ${activeTab === item.id ? 'bg-indigo-50 dark:bg-indigo-950/70' : ''}`}>
-              {item.icon}
+            {/* Active Pill Indicator (Material 3 style) */}
+            <div
+              className={`px-4 py-1 rounded-full flex items-center justify-center transition-all ${
+                isActive
+                  ? item.highlight
+                    ? 'bg-gradient-to-r from-indigo-500/20 to-violet-500/20 dark:from-indigo-950 dark:to-violet-950 text-indigo-600 dark:text-indigo-300'
+                    : 'bg-indigo-100 dark:bg-indigo-950/80 text-indigo-600 dark:text-indigo-400'
+                  : 'bg-transparent'
+              }`}
+            >
+              <div className="relative">
+                {item.icon}
+                {item.badge !== undefined && (
+                  <span className="absolute -top-1 -right-2 bg-rose-500 text-white text-[9px] font-bold px-1.5 py-0.2 rounded-full ring-2 ring-white dark:ring-slate-900 animate-pulse">
+                    {item.badge}
+                  </span>
+                )}
+              </div>
             </div>
-            <span className="text-[10px] mt-0.5">{item.label}</span>
+            <span className="text-[10px] tracking-tight mt-0.5">{item.label}</span>
           </button>
-        ))}
-
-        {/* Center Floating Action Button */}
-        <div className="flex flex-col items-center -mt-6">
-          <button
-            id="fab-add-transaction-btn"
-            onClick={onOpenAddTx}
-            className="w-12 h-12 rounded-full bg-indigo-600 text-white flex items-center justify-center shadow-lg shadow-indigo-600/40 active:scale-95 transition-transform"
-            aria-label="Add transaction"
-          >
-            <Plus className="w-6 h-6" />
-          </button>
-          <span className="text-[9px] font-semibold text-slate-500 dark:text-slate-400 mt-1">Add</span>
-        </div>
-
-        {navItems.slice(2).map((item) => (
-          <button
-            key={item.id}
-            id={`bottom-nav-${item.id}`}
-            onClick={() => setActiveTab(item.id)}
-            className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition-all ${
-              activeTab === item.id
-                ? 'text-indigo-600 dark:text-indigo-400 font-bold'
-                : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
-            }`}
-          >
-            <div className={`p-1 rounded-lg ${activeTab === item.id ? 'bg-indigo-50 dark:bg-indigo-950/70' : ''}`}>
-              {item.icon}
-            </div>
-            <span className="text-[10px] mt-0.5">{item.label}</span>
-          </button>
-        ))}
-      </div>
-    </div>
+        );
+      })}
+    </nav>
   );
 };
