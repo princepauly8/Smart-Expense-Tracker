@@ -1,0 +1,6 @@
+{
+  "name": "Income & Expense Tracker",
+  "description": "A comprehensive mobile-first daily income and expense management application with real-time analytics, budgeting, category insights, transaction history, and data backup.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
